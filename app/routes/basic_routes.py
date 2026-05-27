@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.params import Body
 
 router = APIRouter()
 
@@ -17,10 +18,16 @@ items_list = {
 def items():
 	return items_list.items()
 
-@router.get('/items/{item_id}')
-def get_items(item_id: int):
-	return items_list.get(item_id)
+@router.get('/items/{item_name}')
+def get_items(item_name: str):
+	for key, value in items_list.items():
+		if item_name.lower() == value.lower():
+			return key
 
-@router.post('/items/{new}')
-def add_item(new : str):
-	return (f"Updated item list. Added {new}")
+# Request body
+@router.post('/items')
+def add_item(new : dict = Body(...)):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
+	if new['name'] in items_list.values():
+		return (f"Item {new['name']} exists")
+	items_list[len(items_list) + 1] = new['name']
+	return (f"Updated item list. Added {new['name']}")
