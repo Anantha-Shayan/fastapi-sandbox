@@ -1,33 +1,45 @@
 from fastapi import APIRouter
 from fastapi.params import Body
+from app.schema.schema import AddToCart
+
 
 router = APIRouter()
 
-@router.get('/hello')
-def hello():
+
+@router.get('/')
+def root():
 	return {
-		"message":"Hello!"
+		"message":"Welcome!"
 	}
 
-items_list = {
-	1: "Bat",
-	2: "Ball"
+
+cart = {
+	1 :	{
+			"item_name" : "Earpods",
+			"quantity" : 2
+		},
+	2 :	{
+			"item_name" : "Mobile",
+			"quantity" : 1
+		}
 }
 
-@router.get('/items')
-def items():
-	return items_list.items()
+@router.get('/cart')
+def show_cart():
+	return cart.items()
 
-@router.get('/items/{item_name}')
-def get_items(item_name: str):
-	for key, value in items_list.items():
+@router.get('/cart/{item_name}')
+def get_cart_items(item_name: str):
+	for key, value in cart.items():
 		if item_name.lower() == value.lower():
 			return key
 
 # Request body
-@router.post('/items')
-def add_item(new : dict = Body(...)):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
-	if new['name'] in items_list.values():
-		return (f"Item {new['name']} exists")
-	items_list[len(items_list) + 1] = new['name']
-	return (f"Updated item list. Added {new['name']}")
+@router.post('/cart')
+def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
+	if item.item_name.lower() in cart.items():
+		return "Item exists in cart"
+	item_name = item.item_name
+	item = item.dict()
+	cart[len(cart)+1] = item
+	return (f"{item_name} added to cart!")
