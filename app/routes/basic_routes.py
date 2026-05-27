@@ -28,11 +28,9 @@ cart = {
 def show_cart():
 	return cart.items()
 
-@router.get('/cart/{item_name}')
-def get_cart_items(item_name: str):
-	for key, value in cart.items():
-		if item_name.lower() == value.lower():
-			return key
+@router.get('/cart/{item_id}')
+def get_cart_items(item_id: int):
+	return cart.get(item_id)
 
 # Request body
 @router.post('/cart')
