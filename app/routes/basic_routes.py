@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Body
-from random import randint
 from app.schema.schema import AddToCart
 
 router = APIRouter()
@@ -42,13 +41,11 @@ def add_to_cart(item):
 		if item.item_name.lower() == i["item_name"].lower():
 			raise HTTPException(status_code=409, detail="Item already in cart")
 	item_dict = item.dict()
-	item_dict["id"] = randint(1,100000)
+	item_dict["id"] = max(i["id"] for i in cart) + 1
 	cart.append(item_dict)
 
 # Request body
 @router.post('/cart')
 def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
 	add_to_cart(item)
-	# Never raise HTTPException for success code. Use return only
-	# raise HTTPException(status_code=201, detail=f"{item.item_name} added to cart") 
 	return {"message": "Item added to cart"}

@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class AddToCart(BaseModel):
     item_name : str
-    quantity : int
+    quantity : int = Field(gt=0) # Quantity should be Greater Than 0
