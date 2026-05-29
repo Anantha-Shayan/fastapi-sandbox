@@ -5,5 +5,4 @@ class AddToCart(BaseModel):
     quantity : int = Field(gt=0) # Quantity should be Greater Than 0
 
 class UpdateCart(BaseModel):
-    item_id : int
     quantity : int = Field(gt=0)

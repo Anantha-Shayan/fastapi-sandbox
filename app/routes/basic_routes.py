@@ -73,10 +73,10 @@ def delete_item(id : int):
 def clear_cart():
 	cart.clear()
 
-@router.patch('/cart')
-def update_quantity(item: UpdateCart):
+@router.patch('/cart/{item_id}')
+def update_quantity(item_id: int, item: UpdateCart):
 	for i in cart:
-		if i["id"] == item.item_id:
+		if i["id"] == item_id:
 			i["quantity"] = item.quantity
 			return {'message': "Item Quantity updated"}
 	raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item id not in cart!")
