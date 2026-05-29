@@ -69,6 +69,10 @@ def delete_item_from_cart(item_id):
 def delete_item(id : int):
 	delete_item_from_cart(id)
 
+@router.delete('/cart', status_code=status.HTTP_204_NO_CONTENT)
+def clear_cart():
+	cart.clear()
+
 @router.patch('/cart')
 def update_quantity(item: UpdateCart):
 	for i in cart:
