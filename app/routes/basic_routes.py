@@ -28,9 +28,9 @@ cart = [
 @router.get('/cart')
 def show_cart():
 	# if cart :
-	return cart # 404 is only if resource does not exist. Here cart exists but it simply has no items
+	return cart 
 	#raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart is empty")
-
+	# 404 is only if resource does not exist. Here cart exists but it simply has no items
 
 @router.get('/cart/{item_id}')
 def get_cart_item(item_id: int):
@@ -68,5 +68,10 @@ def delete_item_from_cart(item_id):
 @router.delete('/cart/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_item(id : int):
 	delete_item_from_cart(id)
-	# message = delete_item_from_cart(id)
-	# return message # 204 means "Success, but response body is empty". Hence return nothing
+
+@router.patch('/cart/')
+def update_quantity(item_id: int, quantity: int):
+	for item in cart:
+		if item["id"] == item_id:
+			item["quantity"] = quantity
+	raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item id not in cart!")
