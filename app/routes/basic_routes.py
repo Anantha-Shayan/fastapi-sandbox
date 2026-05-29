@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Body
-from app.schema.schema import AddToCart
+from app.schema.schema import *
 
 router = APIRouter()
 
@@ -70,9 +70,9 @@ def delete_item(id : int):
 	delete_item_from_cart(id)
 
 @router.patch('/cart')
-def update_quantity(item_id: int, quantity: int):
-	for item in cart:
-		if item["id"] == item_id:
-			item["quantity"] = quantity
+def update_quantity(item: UpdateCart):
+	for i in cart:
+		if i["id"] == item.item_id:
+			i["quantity"] = item.quantity
 			return {'message': "Item Quantity updated"}
 	raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item id not in cart!")
