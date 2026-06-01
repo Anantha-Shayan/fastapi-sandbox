@@ -1,13 +1,10 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Body
 from app.schema.schema import *
-from app.db.database import db_try
+from app.db.database import *
 
 router = APIRouter()
 
-@router.get("/testdb")
-def get_users():
-    return db_try()
 
 @router.get('/')
 def root():
@@ -16,25 +13,9 @@ def root():
 	}
 
 
-cart = [
-	{
-		"item_name" : "Earpods",
-		"quantity" : 2,
-		"id" : 1
-	},
-	{
-		"item_name" : "Mobile",
-		"quantity" : 1,
-		"id" : 2
-	}
-]
-
 @router.get('/cart')
-def show_cart():
-	# if cart :
-	return cart 
-	#raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart is empty")
-	# 404 is only if resource does not exist. Here cart exists but it simply has no items
+def display_cart():
+	return show_cart()
 
 @router.get('/cart/{item_id}')
 def get_cart_item(item_id: int):

@@ -6,14 +6,15 @@ DATABASE_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 DATABASE_HOST = os.getenv("POSTGRES_HOST")
 
 
-def db_try():
-        try:
-            conn = psycopg.connect(dbname='first_db', host=DATABASE_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD)
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM users")
+def get_connection():
+    return psycopg.connect(
+        dbname='fastapi',
+        host=DATABASE_HOST,
+        user=DATABASE_USER,
+        password=DATABASE_PASSWORD)
 
-            records = cur.fetchall()
-            return records
-        except Exception as e:
-            print("Unable to connect to Database....")
-            print("Error: ", e)
+def show_cart(): # Opening with 'with' ensures connection and cursor is closed
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM cart")
+            return cur.fetchall()
