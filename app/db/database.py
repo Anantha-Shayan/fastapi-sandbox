@@ -1,5 +1,5 @@
-import psycopg
 import os
+import psycopg
 
 DATABASE_USER = os.getenv("POSTGRES_USER")
 DATABASE_PASSWORD = os.getenv("POSTGRES_PASSWORD")
@@ -15,6 +15,6 @@ def get_connection():
 
 def show_cart(): # Opening with 'with' ensures connection and cursor is closed
     with get_connection() as conn:
-        with conn.cursor() as cur:
+        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute("SELECT * FROM cart")
             return cur.fetchall()
