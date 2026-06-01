@@ -1,9 +1,13 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Body
 from app.schema.schema import *
+from app.db.database import db_try
 
 router = APIRouter()
 
+@router.get("/testdb")
+def get_users():
+    return db_try()
 
 @router.get('/')
 def root():
