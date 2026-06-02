@@ -34,10 +34,10 @@ def get_item_from_cart(item_id: int):
 @router.post('/cart', status_code=status.HTTP_201_CREATED) # Default will be 200 which is not ideal status 
 #code when created something. Hence change the default to 201
 def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
-	existing_item = get_item_by_name(item.item_name)
-	if existing_item:
-		raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Item already in cart!")
-	add_to_cart(item)
+	try:
+		add_to_cart(item)
+	except psycopg.errors.UniqueViolation:
+		raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Item already in cart!")
 	return {"message": f"{item.item_name} added to cart"}
 
 
