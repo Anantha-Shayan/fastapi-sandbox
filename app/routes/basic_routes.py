@@ -24,7 +24,7 @@ def show_cart():
 
 @router.get('/cart/{item_id}')
 def get_item_from_cart(item_id: int):
-	item = get_cart_item(item_id)
+	item = get_item_by_id(item_id)
 	if item:
 		return item
 	raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart!")
@@ -34,10 +34,9 @@ def get_item_from_cart(item_id: int):
 @router.post('/cart', status_code=status.HTTP_201_CREATED) # Default will be 200 which is not ideal status 
 #code when created something. Hence change the default to 201
 def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
-	current_cart = get_cart()
-	for i in current_cart:
-		if i["item_name"] == item.item_name:
-			raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Item exists in cart!")
+	existing_item = get_item_by_name(item.item_name)
+	if existing_item:
+		raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Item already in cart!")
 	add_to_cart(item)
 	return {"message": f"{item.item_name} added to cart"}
 
@@ -52,21 +51,20 @@ def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body 
 
 @router.delete('/cart/{item_name}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_item(item_name: str):
-	current_cart = get_cart()
-	for i in current_cart:
-		if i["item_name"] == item_name:
-			delete_from_cart(item_name)
-			return {"message": "Item removed from cart"}
-	raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart!")
+	existing_item = get_item_by_name(item_name)
+	if not existing_item:
+		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart!")
+	delete_from_cart(item_name)
+
 
 @router.delete('/cart', status_code=status.HTTP_204_NO_CONTENT)
 def clear_cart_items():
 	clear_cart()
 
 @router.patch('/cart/{item_id}')
-def update_quantity(item_id: int, item: UpdateCart):
-	for i in cart:
-		if i["id"] == item_id:
-			i["quantity"] = item.quantity
-			return {'message': "Item Quantity updated"}
-	raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item id not in cart!")
+def update_item_in_cart(item_id: int, item: UpdateCart):
+	existing_item = get_item_by_id(item_id)
+	if not existing_item:
+		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item id not in cart!")
+	update_quantity(item_id,item.quantity)
+	return {'message': "Item Quantity updated"}

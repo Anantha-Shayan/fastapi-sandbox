@@ -14,29 +14,40 @@ def get_connection():
         user=DATABASE_USER,
         password=DATABASE_PASSWORD)
 
+def get_item_by_name(item_name: str):
+    with get_connection() as conn:
+        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
+            cur.execute("SELECT * FROM cart WHERE item_name=%s", (item_name,))
+            return cur.fetchone()
+
+def get_item_by_id(item_id: int):
+    with get_connection() as conn:
+        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
+            cur.execute("SELECT * FROM cart WHERE id=%s", (item_id,))
+            return cur.fetchone()
+
 def get_cart(): # Opening with 'with' ensures connection and cursor is closed
     with get_connection() as conn:
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute("SELECT * FROM cart")
             return cur.fetchall()
 
-def get_cart_item(id):
-    with get_connection() as conn:
-        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
-            cur.execute(f"SELECT * FROM cart WHERE id={id}")
-            return cur.fetchone()
-
 def add_to_cart(item):
     with get_connection() as conn:
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
-            cur.execute(f"INSERT INTO cart(item_name, quantity) values('{item.item_name}', {item.quantity})")
+            cur.execute("INSERT INTO cart(item_name, quantity) values(%s, %s)", (item.item_name, item.quantity))
 
 def delete_from_cart(item_name):
     with get_connection() as conn:
         with conn.cursor() as cur:
-            cur.execute(f"DELETE FROM cart WHERE item_name='{item_name}'")
+            cur.execute("DELETE FROM cart WHERE item_name=%s",(item_name,))
 
 def clear_cart():
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("DELETE FROM cart")
+
+def update_quantity(id,quantity):
+    with get_connection() as conn:
+        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
+            cur.execute("UPDATE cart SET quantity=%s WHERE id=%s", (quantity,id))
