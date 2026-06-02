@@ -51,10 +51,9 @@ def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body 
 
 @router.delete('/cart/{item_name}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_item(item_name: str):
-	existing_item = get_item_by_name(item_name)
-	if not existing_item:
+	deleted_item = delete_from_cart(item_name)
+	if not deleted_item:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart!")
-	delete_from_cart(item_name)
 
 
 @router.delete('/cart', status_code=status.HTTP_204_NO_CONTENT)
@@ -63,8 +62,10 @@ def clear_cart_items():
 
 @router.patch('/cart/{item_id}')
 def update_item_in_cart(item_id: int, item: UpdateCart):
-	existing_item = get_item_by_id(item_id)
-	if not existing_item:
+	updated_item = update_quantity(item_id, item.quantity)
+	if not updated_item:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item id not in cart!")
-	update_quantity(item_id,item.quantity)
-	return {'message': "Item Quantity updated"}
+	return {
+		'message': "Item Quantity updated",
+		'data' : updated_item
+		}

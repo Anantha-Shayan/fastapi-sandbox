@@ -18,6 +18,9 @@ def get_item_by_name(item_name: str):
     with get_connection() as conn:
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute("SELECT * FROM cart WHERE item_name=%s", (item_name,))
+            # Using %s in query and then passing the data in tuple - (item_name,)
+            # will prevent SQL INJECTION
+            # Hence, Never build SQL with f-strings 
             return cur.fetchone()
 
 def get_item_by_id(item_id: int):
@@ -40,14 +43,16 @@ def add_to_cart(item):
 def delete_from_cart(item_name):
     with get_connection() as conn:
         with conn.cursor() as cur:
-            cur.execute("DELETE FROM cart WHERE item_name=%s",(item_name,))
+            cur.execute("DELETE FROM cart WHERE item_name=%s RETURNING *",(item_name,))
+            return cur.fetchone()
 
 def clear_cart():
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("DELETE FROM cart")
 
-def update_quantity(id,quantity):
+def update_quantity(item_id,quantity):
     with get_connection() as conn:
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
-            cur.execute("UPDATE cart SET quantity=%s WHERE id=%s", (quantity,id))
+            cur.execute("UPDATE cart SET quantity=%s WHERE id=%s RETURNING *", (quantity,item_id))
+            return cur.fetchone()
