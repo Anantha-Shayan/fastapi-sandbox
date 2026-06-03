@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 class AddToCart(BaseModel):
     item_name : str
@@ -6,3 +7,7 @@ class AddToCart(BaseModel):
 
 class UpdateCart(BaseModel):
     quantity : int = Field(gt=0)
+
+class ResUpdateQuantity(BaseModel):
+    message : str
+    data : AddToCart

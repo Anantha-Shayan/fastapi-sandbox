@@ -60,7 +60,7 @@ def delete_item(item_name: str):
 def clear_cart_items():
 	clear_cart()
 
-@router.patch('/cart/{item_id}')
+@router.patch('/cart/{item_id}', response_model=ResUpdateQuantity)
 def update_item_in_cart(item_id: int, item: UpdateCart):
 	updated_item = update_quantity(item_id, item.quantity)
 	if not updated_item:
