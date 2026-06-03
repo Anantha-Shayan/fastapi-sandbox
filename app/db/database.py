@@ -1,18 +1,18 @@
 import os
 import psycopg
 from app.schema.schema import AddToCart
-
-DATABASE_USER = os.getenv("POSTGRES_USER")
-DATABASE_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-DATABASE_HOST = os.getenv("POSTGRES_HOST")
+from app.config import settings
+# DATABASE_USER = os.getenv("POSTGRES_USER")
+# DATABASE_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+# DATABASE_HOST = os.getenv("POSTGRES_HOST")
 
 
 def get_connection():
     return psycopg.connect(
         dbname='fastapi',
-        host=DATABASE_HOST,
-        user=DATABASE_USER,
-        password=DATABASE_PASSWORD)
+        host=settings.postgres_host,
+        user=settings.postgres_user,
+        password=settings.postgres_password)
 
 def get_item_by_name(item_name: str):
     with get_connection() as conn:
