@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 
 class AddToCart(BaseModel):
@@ -11,3 +11,7 @@ class UpdateCart(BaseModel):
 class ResUpdateQuantity(BaseModel):
     message : str
     data : AddToCart
+
+class CreateUser(BaseModel):
+    email : EmailStr
+    password: str
