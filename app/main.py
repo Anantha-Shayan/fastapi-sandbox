@@ -9,7 +9,7 @@ app.include_router(router)
 
 @app.middleware("http")
 async def process_time_header(request:Request, call_next):
-	print("Middleware called")
+	# print("Middleware called")
 	start = time.perf_counter()
 	response = await call_next(request)
 	end = time.perf_counter()

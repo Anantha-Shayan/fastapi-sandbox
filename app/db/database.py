@@ -11,11 +11,8 @@ pool = ConnectionPool(
 )
 
 def get_connection():
-    return psycopg.connect(
-        dbname='fastapi',
-        host=settings.postgres_host,
-        user=settings.postgres_user,
-        password=settings.postgres_password)
+    return pool.connection()
+
 
 def get_item_by_name(item_name: str):
     with pool.connection() as conn:

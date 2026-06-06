@@ -2,6 +2,8 @@ from fastapi import  APIRouter, HTTPException, status
 from fastapi.params import Body
 from app.schema.schema import *
 from app.db.database import *
+from app.services.cart_service import *
+
 
 router = APIRouter()
 
@@ -10,6 +12,9 @@ def root():
 	return {
 		"message":"Welcome!"
 	}
+
+# @router.post('/register', status_code=status.HTTP_201_CREATED)
+# def register_user(user: CreateUser):
 
 
 @router.get('/cart')
@@ -34,11 +39,12 @@ def get_item_from_cart(item_id: int):
 #code when created something. Hence change the default to 201
 def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
 	try:
-		add_to_cart(item)
-	except psycopg.errors.UniqueViolation:
-		raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Item already in cart!")
-	return {"message": f"{item.item_name} added to cart"}
-
+		return add_item(item)
+	except ItemAlreadyExists:
+		raise HTTPException(
+			status_code=status.HTTP_409_CONFLICT,
+			detail="Item already in cart!"
+			)
 
 # def delete_item_from_cart(item_id):
 # 	for i in cart:
@@ -49,9 +55,10 @@ def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body 
 	
 
 @router.delete('/cart/{item_name}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_item(item_name: str):
-	deleted_item = delete_from_cart(item_name)
-	if not deleted_item:
+def delete_item_from_cart(item_name: str):
+	try:
+		delete_item(item_name)
+	except ItemDoesNotExist:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart!")
 
 
@@ -61,10 +68,7 @@ def clear_cart_items():
 
 @router.patch('/cart/{item_id}', response_model=ResUpdateQuantity)
 def update_item_in_cart(item_id: int, item: UpdateCart):
-	updated_item = update_quantity(item_id, item.quantity)
-	if not updated_item:
-		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item id not in cart!")
-	return {
-		'message': "Item Quantity updated",
-		'data' : updated_item
-		}
+	try:
+		return update_item(item_id, item.quantity)
+	except ItemDoesNotExist:
+		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart!")
