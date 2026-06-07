@@ -36,11 +36,9 @@ def get_cart(): # Opening with 'with' ensures connection and cursor is closed
             return cur.fetchall()
 
 def add_to_cart(item):
-    start = time.perf_counter()
     with pool.connection() as conn:
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute("INSERT INTO cart(item_name, quantity) values(%s, %s)", (item.item_name, item.quantity))
-    print(f"DB add to cart: {str((time.perf_counter() - start)*1000)}ms")
 
 def delete_from_cart(item_name):
     with pool.connection() as conn:
@@ -54,9 +52,13 @@ def clear_cart():
             cur.execute("DELETE FROM cart")
 
 def update_quantity(item_id,quantity):
-    start = time.perf_counter()
     with pool.connection() as conn:
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute("UPDATE cart SET quantity=%s WHERE id=%s RETURNING *", (quantity,item_id))
-            print(f"DB update cart: {str((time.perf_counter() - start)*1000)}ms")
+            return cur.fetchone()
+
+def create_user(user):
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
+            cur.execute("INSERT INTO users(email,password) values(%s,%s) RETURNING *", (user.email, user.password))
             return cur.fetchone()

@@ -2,8 +2,7 @@ from fastapi import  APIRouter, HTTPException, status
 from fastapi.params import Body
 from app.schema.schema import *
 from app.db.database import *
-from app.services.cart_service import *
-
+from app.services import cart_service, auth_service
 
 router = APIRouter()
 
@@ -13,9 +12,15 @@ def root():
 		"message":"Welcome!"
 	}
 
-# @router.post('/register', status_code=status.HTTP_201_CREATED)
-# def register_user(user: CreateUser):
-
+@router.post('/user/register', status_code=status.HTTP_201_CREATED)
+def register_user(user: CreateUser):
+	try :
+		auth_service.create_new_user(user)
+	except auth_service.UserAlreadyRegistered:
+		raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already registered!")
+	return {
+		"message" : "Registration successful!!!"
+	}
 
 @router.get('/cart')
 def show_cart():
@@ -39,7 +44,7 @@ def get_item_from_cart(item_id: int):
 #code when created something. Hence change the default to 201
 def add_item_to_cart(item : AddToCart):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
 	try:
-		return add_item(item)
+		return cart_service.add_item(item)
 	except ItemAlreadyExists:
 		raise HTTPException(
 			status_code=status.HTTP_409_CONFLICT,
@@ -69,6 +74,6 @@ def clear_cart_items():
 @router.patch('/cart/{item_id}', response_model=ResUpdateQuantity)
 def update_item_in_cart(item_id: int, item: UpdateCart):
 	try:
-		return update_item(item_id, item.quantity)
+		return cart_service.update_item(item_id, item.quantity)
 	except ItemDoesNotExist:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart!")
