@@ -1,21 +1,16 @@
-from pwdlib import PasswordHash
-from app.db.database import *
-from app.schema.schema import *
+import psycopg
+from app.schema import schema
+from app.db import database
+from app.exceptions import exceptions
+from app.utils import utils
 
-class UserAlreadyRegistered(Exception):
-    pass
 
-password_hash = PasswordHash.recommended()
-
-def hash_password(pwd):
-    return password_hash.hash(pwd)
-
-def create_new_user(user):
-    user.password = hash_password(user.password)
+def create_new_user(user:schema.CreateUser):
+    user.password = utils.hash_password(user.password)
     try:
-        create_user(user)
+        database.create_user(user)
     except psycopg.errors.UniqueViolation:
-        raise UserAlreadyRegistered()
+        raise exceptions.UserAlreadyRegistered()
     return {
         "message" : "Registration Sucessful!!!"
     }

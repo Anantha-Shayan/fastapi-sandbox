@@ -1,6 +1,5 @@
 import os, time
 import psycopg
-from app.schema.schema import AddToCart
 from app.config import settings
 from psycopg_pool import ConnectionPool
 
