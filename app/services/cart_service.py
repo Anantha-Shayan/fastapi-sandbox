@@ -4,7 +4,7 @@ from app.exceptions import exceptions
 
 def add_item(item):	# Extracts all the fields from the Body -> Convert to python dict -> store in 'new'
 	try:
-		database.add_to_cart(item)
+		database.insert_item_to_cart(item)
 	except psycopg.errors.UniqueViolation:
 		raise exceptions.ItemAlreadyExists()
 	return {"message": f"{item.item_name} added to cart"}

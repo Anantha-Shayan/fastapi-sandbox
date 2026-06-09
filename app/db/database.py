@@ -34,7 +34,7 @@ def get_cart(): # Opening with 'with' ensures connection and cursor is closed
             cur.execute("SELECT * FROM cart")
             return cur.fetchall()
 
-def add_to_cart(item):
+def insert_item_to_cart(item):
     with pool.connection() as conn:
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute("INSERT INTO cart(item_name, quantity) values(%s, %s)", (item.item_name, item.quantity))
@@ -45,7 +45,7 @@ def delete_from_cart(item_name):
             cur.execute("DELETE FROM cart WHERE item_name=%s RETURNING *",(item_name,))
             return cur.fetchone()
 
-def clear_cart():
+def delete_cart():
     with pool.connection() as conn:
         with conn.cursor() as cur:
             cur.execute("DELETE FROM cart")
@@ -59,5 +59,11 @@ def update_quantity(item_id,quantity):
 def create_user(user):
     with pool.connection() as conn:
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
-            cur.execute("INSERT INTO users(email,password) values(%s,%s) RETURNING *", (user.email, user.password))
+            cur.execute("INSERT INTO users(user_name,email,password) values(%s,%s,%s) RETURNING *", (user.user_name,user.email, user.password))
+            return cur.fetchone()
+
+def get_user(user_id:int):
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
+            cur.execute("SELECT id, user_name FROM users WHERE id=%s", (user_id,))
             return cur.fetchone()

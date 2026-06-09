@@ -13,5 +13,10 @@ class ResUpdateQuantity(BaseModel):
     data : AddToCart
 
 class CreateUser(BaseModel):
+    user_name : str
     email : EmailStr
     password: str
+
+class ResGetUserById(BaseModel):
+    id : int
+    user_name : str

@@ -60,7 +60,7 @@ def delete_item_from_cart(item_name: str):
 
 @router.delete('/cart', status_code=status.HTTP_204_NO_CONTENT)
 def clear_cart_items():
-	database.clear_cart()
+	database.delete_cart()
 
 @router.patch('/cart/{item_id}', response_model=schema.ResUpdateQuantity)
 def update_item_in_cart(item_id: int, item: schema.UpdateCart):
@@ -68,3 +68,11 @@ def update_item_in_cart(item_id: int, item: schema.UpdateCart):
 		return cart_service.update_item(item_id, item.quantity)
 	except ItemDoesNotExist:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart!")
+
+@router.get('/user/{user_id}', response_model=schema.ResGetUserById)
+def get_user_by_id(user_id: int):
+	try :
+		 user = auth_service.retrieve_user_by_id(user_id)
+	except exceptions.UserDoesNotExist:
+		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "User does not exist!")
+	return user

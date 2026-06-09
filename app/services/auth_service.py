@@ -14,3 +14,10 @@ def create_new_user(user:schema.CreateUser):
     return {
         "message" : "Registration Sucessful!!!"
     }
+
+def retrieve_user_by_id(user_id: int):
+    user = database.get_user(user_id)
+    if user:
+        return user
+    else:
+        raise exceptions.UserDoesNotExist()

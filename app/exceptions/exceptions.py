@@ -6,3 +6,6 @@ class ItemAlreadyExists(Exception):
 
 class ItemDoesNotExist(Exception):
     pass
+
+class UserDoesNotExist(Exception):
+    pass
