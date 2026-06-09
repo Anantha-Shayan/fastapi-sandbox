@@ -1,11 +1,13 @@
 import time
 from fastapi import FastAPI, Request
-from app.routes import basic_routes
+from app.routes import basic_routes, auth, cart
 from app.db import database
 
 app = FastAPI()
 
 app.include_router(basic_routes.router)
+app.include_router(auth.router)
+app.include_router(cart.router)
 
 @app.middleware("http")
 async def process_time_header(request:Request, call_next):
