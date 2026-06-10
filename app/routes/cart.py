@@ -6,7 +6,8 @@ from app.services import cart_service, auth_service
 from app.exceptions import exceptions
 
 router = APIRouter(
-    prefix="/cart"
+    prefix="/cart",
+    tags=['cart']
 )
 
 @router.get('/')
@@ -48,7 +49,7 @@ def delete_item_from_cart(item_name: str):
 def clear_cart_items():
 	database.delete_cart()
 
-@router.patch('/{item_id}', response_model=schema.ResUpdateQuantity)
+@router.patch('/{item_id}', response_model=schema.ResponseUpdateQuantity)
 def update_item_in_cart(item_id: int, item: schema.UpdateCart):
 	try:
 		return cart_service.update_item(item_id, item.quantity)

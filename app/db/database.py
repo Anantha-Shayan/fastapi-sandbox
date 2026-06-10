@@ -67,3 +67,9 @@ def get_user(user_id:int):
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute("SELECT id, user_name FROM users WHERE id=%s", (user_id,))
             return cur.fetchone()
+
+def lookup_user(user_email: str):
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
+            cur.execute("SELECT id,password FROM users WHERE email=%s", (user_email,))
+            return cur.fetchone()

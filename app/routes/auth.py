@@ -6,8 +6,22 @@ from app.services import cart_service, auth_service
 from app.exceptions import exceptions
 
 router = APIRouter(
-	prefix='/user'
+	prefix='/user',
+	tags=['user']
 )
+
+
+@router.post('/auth/login')
+def login_user(credentials: schema.LoginUser):
+	try:
+		auth_service.verify_user(credentials)
+	except exceptions.InvalidCredential:
+		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Credentials")
+	return {
+        "message" : "User verified!"
+    }
+
+
 
 @router.post('/register', status_code=status.HTTP_201_CREATED)
 def register_user(user: schema.CreateUser):
@@ -19,7 +33,7 @@ def register_user(user: schema.CreateUser):
 		"message" : "Registration successful!!!"
 	}
 
-@router.get('/{user_id}', response_model=schema.ResGetUserById)
+@router.get('/{user_id}', response_model=schema.ResponseGetUserById)
 def get_user_by_id(user_id: int):
 	try :
 		 user = auth_service.retrieve_user_by_id(user_id)

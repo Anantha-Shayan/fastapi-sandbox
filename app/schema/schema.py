@@ -8,15 +8,17 @@ class AddToCart(BaseModel):
 class UpdateCart(BaseModel):
     quantity : int = Field(gt=0)
 
-class ResUpdateQuantity(BaseModel):
+class ResponseUpdateQuantity(BaseModel):
     message : str
     data : AddToCart
 
-class CreateUser(BaseModel):
-    user_name : str
+class LoginUser(BaseModel):
     email : EmailStr
-    password: str
+    password : str = Field()
 
-class ResGetUserById(BaseModel):
+class CreateUser(LoginUser):
+    user_name : str
+
+class ResponseGetUserById(BaseModel):
     id : int
     user_name : str

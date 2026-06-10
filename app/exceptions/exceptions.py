@@ -9,3 +9,6 @@ class ItemDoesNotExist(Exception):
 
 class UserDoesNotExist(Exception):
     pass
+
+class InvalidCredential(Exception):
+    pass
