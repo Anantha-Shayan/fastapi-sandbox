@@ -4,6 +4,7 @@ from app.schema import schema
 from app.db import database
 from app.services import cart_service, auth_service
 from app.exceptions import exceptions
+from app.utils import jwt
 
 router = APIRouter(
 	prefix='/user',
@@ -14,12 +15,20 @@ router = APIRouter(
 @router.post('/auth/login')
 def login_user(credentials: schema.LoginUser):
 	try:
-		auth_service.verify_user(credentials)
+		user = auth_service.verify_user(credentials)
 	except exceptions.InvalidCredential:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Credentials")
-	return {
-        "message" : "User verified!"
-    }
+	
+	token = jwt.create_access_token(
+		{
+			"sub": str(user["id"])
+		}
+	)
+
+	return{
+		"access_token" : token,
+		"token_type" : "bearer"
+	}
 
 
 

@@ -22,7 +22,7 @@ def verify_user(credentials):
     elif not security.verify_password(credentials.password, user["password"]):
         raise exceptions.InvalidCredential()
     else :
-        return user["id"]
+        return user
     
 def retrieve_user_by_id(user_id: int):
     user = database.get_user(user_id)
