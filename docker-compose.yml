@@ -23,7 +23,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/backend
-
+      - ./backend:/backend:Z
+      #:Z - Docker asks SELinux to rename the file so that the contaier can access it
 volumes:
       postgres_data:
