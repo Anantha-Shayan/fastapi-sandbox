@@ -1,4 +1,4 @@
-from fastapi import  APIRouter, HTTPException, status
+from fastapi import  APIRouter, HTTPException, status, Depends
 from fastapi.params import Body
 from app.schema import schema
 from app.db import database
@@ -6,6 +6,10 @@ from app.services import cart_service
 from app.exceptions import exceptions
 from app.utils import jwt
 from app.services import auth_service
+from fastapi.security.oauth2 import OAuth2PasswordBearer
+
+# OAuth2PasswordBearer just extracts the Authorization: Bearer eyJ... (i.e.,access_token) from the incoming request
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/user/auth/login')
 
 router = APIRouter(
 	prefix='/user',
@@ -33,11 +37,9 @@ def login_user(credentials: schema.LoginUser):
 
 
 @router.get('/auth/login/decode')
-def get_jwt_decode(token_detail: dict):
-	returned = jwt.decode_access_token(
-		token_detail["access_token"]
-	)
-	return returned
+def get_jwt_decode(token: str = Depends(oauth2_scheme)):
+	return jwt.decode_access_token(token)
+	
 
 @router.post('/register', status_code=status.HTTP_201_CREATED)
 def register_user(user: schema.CreateUser):
