@@ -2,8 +2,9 @@ from fastapi import  APIRouter, HTTPException, status
 from fastapi.params import Body
 from app.schema import schema
 from app.db import database
-from app.services import cart_service, auth_service
+from app.services import cart_service
 from app.exceptions import exceptions
+from app.services import auth_service
 
 router = APIRouter(
     prefix="/cart",

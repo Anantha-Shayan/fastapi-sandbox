@@ -2,9 +2,10 @@ from fastapi import  APIRouter, HTTPException, status
 from fastapi.params import Body
 from app.schema import schema
 from app.db import database
-from app.services import cart_service, auth_service
+from app.services import cart_service
 from app.exceptions import exceptions
 from app.utils import jwt
+from app.services import auth_service
 
 router = APIRouter(
 	prefix='/user',
@@ -45,7 +46,7 @@ def register_user(user: schema.CreateUser):
 @router.get('/{user_id}', response_model=schema.ResponseGetUserById)
 def get_user_by_id(user_id: int):
 	try :
-		 user = auth_service.retrieve_user_by_id(user_id)
+		user = auth_service.retrieve_user_by_id(user_id)
 	except exceptions.UserDoesNotExist:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "User does not exist!")
 	return user

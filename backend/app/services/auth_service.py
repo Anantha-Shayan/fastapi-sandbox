@@ -6,7 +6,7 @@ from app.utils import security
 
 
 def create_new_user(user:schema.CreateUser):
-    user.password = utils.hash_password(user.password)
+    user.password = security.hash_password(user.password)
     try:
         database.create_user(user)
     except psycopg.errors.UniqueViolation:

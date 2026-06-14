@@ -1,7 +1,8 @@
 import time
 from fastapi import FastAPI, Request
-from app.routes import basic_routes, auth, cart
+from app.routes import cart
 from app.db import database
+from app.routes import auth, basic_routes
 
 app = FastAPI()
 
