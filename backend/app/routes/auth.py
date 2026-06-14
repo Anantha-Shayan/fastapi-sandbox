@@ -26,12 +26,18 @@ def login_user(credentials: schema.LoginUser):
 		}
 	)
 
-	return{
+	return {
 		"access_token" : token,
 		"token_type" : "bearer"
 	}
 
 
+@router.get('/auth/login/decode')
+def get_jwt_decode(token_detail: dict):
+	returned = jwt.decode_access_token(
+		token_detail["access_token"]
+	)
+	return returned
 
 @router.post('/register', status_code=status.HTTP_201_CREATED)
 def register_user(user: schema.CreateUser):

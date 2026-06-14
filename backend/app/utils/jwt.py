@@ -15,3 +15,11 @@ def create_access_token(data: dict) -> str:
     )
 
     return token
+
+def decode_access_token(token : str):
+    decoded = jwt.decode(
+        token,
+        settings.secret_key,
+        settings.jwt_algorithm
+    )
+    return decoded
