@@ -1,7 +1,7 @@
 FROM python:3.10-slim 
 #psycopg,argon2,etc., are not compatible with alpine
 
-WORKDIR /app
+WORKDIR /backend
 
 COPY requirements.txt .
 
