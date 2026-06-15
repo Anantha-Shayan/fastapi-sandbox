@@ -22,7 +22,7 @@ def login_user(credentials: schema.LoginUser):
 	try:
 		user = auth_service.verify_user(credentials)
 	except exceptions.InvalidCredential:
-		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Credentials")
+		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Credentials")
 	
 	token = jwt.create_access_token(
 		{
@@ -36,9 +36,11 @@ def login_user(credentials: schema.LoginUser):
 	}
 
 
-@router.get('/auth/login/decode')
-def get_jwt_decode(token: str = Depends(oauth2_scheme)):
-	return jwt.decode_access_token(token)
+@router.get('/me')
+def get_user(header: str = Depends(oauth2_scheme)):
+	decoded = jwt.decode_access_token(header)
+	user = auth_service.retrieve_user_by_id(decoded["sub"])
+	return user
 	
 
 @router.post('/register', status_code=status.HTTP_201_CREATED)
@@ -50,11 +52,3 @@ def register_user(user: schema.CreateUser):
 	return {
 		"message" : "Registration successful!!!"
 	}
-
-@router.get('/{user_id}', response_model=schema.ResponseGetUserById)
-def get_user_by_id(user_id: int):
-	try :
-		user = auth_service.retrieve_user_by_id(user_id)
-	except exceptions.UserDoesNotExist:
-		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "User does not exist!")
-	return user
