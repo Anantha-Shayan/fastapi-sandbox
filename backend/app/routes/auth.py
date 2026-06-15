@@ -6,10 +6,6 @@ from app.services import cart_service
 from app.exceptions import exceptions
 from app.utils import jwt
 from app.services import auth_service
-from fastapi.security.oauth2 import OAuth2PasswordBearer
-
-# OAuth2PasswordBearer just extracts the Authorization: Bearer eyJ... (i.e.,access_token) from the incoming request
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/user/auth/login')
 
 router = APIRouter(
 	prefix='/user',
@@ -36,11 +32,8 @@ def login_user(credentials: schema.LoginUser):
 	}
 
 
-@router.get('/me')
-def get_user(header: str = Depends(oauth2_scheme)):
-	decoded = jwt.decode_access_token(header)
-	user = auth_service.retrieve_user_by_id(decoded["sub"])
-	return user
+# @router.get('/me')
+
 	
 
 @router.post('/register', status_code=status.HTTP_201_CREATED)
