@@ -18,12 +18,13 @@ def create_new_user(user:schema.CreateUser):
 def verify_user(credentials):
     user = database.lookup_user(credentials.email)
     if not user:
-	    raise exceptions.InvalidCredential()
+        raise exceptions.InvalidCredential()
     elif not security.verify_password(credentials.password, user["password"]):
         raise exceptions.InvalidCredential()
-    else :
+    else:
         return user
-    
+
+
 def retrieve_user_by_id(user_id: int):
     user = database.get_user(user_id)
     if user:

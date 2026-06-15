@@ -1,6 +1,7 @@
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 from app.config import settings
+from app.schema import schema
 
 def create_access_token(data: dict) -> str:
     payload = data.copy()
@@ -15,3 +16,11 @@ def create_access_token(data: dict) -> str:
     )
 
     return token
+
+def decode_access_token(token : str):
+    decoded = jwt.decode(
+        token,
+        settings.secret_key,
+        settings.jwt_algorithm
+    )
+    return decoded
