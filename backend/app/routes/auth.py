@@ -38,10 +38,7 @@ def login_user(credentials: schema.LoginUser):
 
 @router.post('/register', status_code=status.HTTP_201_CREATED)
 def register_user(user: schema.CreateUser):
-	try :
-		auth_service.create_new_user(user)
-	except exceptions.UserAlreadyRegistered:
-		raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already registered!")
+	auth_service.create_new_user(user)
 	return {
 		"message" : "Registration successful!!!"
 	}

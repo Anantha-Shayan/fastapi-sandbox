@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request
 from app.routes import cart
 from app.db import database
 from app.routes import auth, basic_routes
+from app.exceptions import exceptions, handlers
 
 app = FastAPI()
 
@@ -26,3 +27,10 @@ try:
 except Exception as error:
     print("Connecting to Database failed...")
     print(error)
+
+
+app.add_exception_handler(exceptions.UserAlreadyRegistered,handlers.user_already_exists)
+app.add_exception_handler(exceptions.ItemAlreadyExists,handlers.item_already_exists)
+app.add_exception_handler(exceptions.UserDoesNotExist, handlers.user_not_found)
+app.add_exception_handler(exceptions.ItemDoesNotExist,handlers.item_not_found)
+app.add_exception_handler(exceptions.InvalidCredential,handlers.invalid_credentials)
