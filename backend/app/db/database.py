@@ -5,7 +5,7 @@ from psycopg_pool import ConnectionPool
 
 pool = ConnectionPool(
     conninfo=(
-        f"dbname=fastapi user={settings.postgres_user} password={settings.postgres_password} host=postgres"
+        f"dbname={settings.postgres_database} user={settings.postgres_user} password={settings.postgres_password} host={settings.postgres_host}"
     )
 )
 
