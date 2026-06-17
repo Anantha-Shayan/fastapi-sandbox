@@ -1,7 +1,8 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer
-from services import auth_service
-from utils import jwt, JWTError
+from jose import JWTError
+from app.services import auth_service
+from app.utils import jwt
 from app.exceptions import exceptions
 
 # OAuth2PasswordBearer just extracts the Authorization: Bearer eyJ... (i.e.,access_token) from the incoming request
