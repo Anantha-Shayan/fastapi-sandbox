@@ -73,3 +73,9 @@ def lookup_user(user_email: str):
         with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute("SELECT id,password FROM users WHERE email=%s", (user_email,))
             return cur.fetchone()
+        
+def get_products(limit):
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM products LIMIT '%s'", (limit,))
+            return cur.fetchall()

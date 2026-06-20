@@ -18,6 +18,7 @@ class LoginUser(BaseModel):
 
 class CreateUser(LoginUser):
     user_name : str
+    role : str = Field(default="user")
 
 class ResponseGetUserById(BaseModel):
     id : int
